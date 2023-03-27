@@ -2,7 +2,6 @@ import Versions.configureJavaToolchain
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
-import java.net.URI
 
 plugins {
   kotlin("jvm") version Versions.KOTLIN
@@ -42,17 +41,14 @@ group = "net.navatwo"
 archivesName.set("kinterval-tree")
 version = "0.1.0-SNAPSHOT"
 
-if (System.getenv("CI") == "true") {
-  when (val eventName = System.getenv("GITHUB_EVENT_NAME")) {
-    "release" -> {
-      version = version.toString().substringBefore("-SNAPSHOT")
-      logger.info("Deploying version: $version")
-    }
-    "push", "pull_request" -> Unit
-    else -> {
-      logger.warn("unknown event: $eventName")
-    }
-  }
+fun findProperty(name: String): String? {
+  val propertyName = "ORG_GRADLE_PROJECT_$name"
+  return project.findProperty(propertyName) as? String
+    ?: System.getenv("ORG_GRADLE_PROJECT_$name")
+}
+
+if (findProperty("RELEASE") != null) {
+  version = version.toString().substringBefore("-SNAPSHOT")
 }
 
 repositories {
@@ -85,9 +81,10 @@ artifacts {
 }
 
 signing {
-  val signingKeyId: String? by project
-  val signingKey: String? by project
-  val signingPassword: String? by project
+  val signingKeyId: String? = findProperty("signingKeyId")
+  val signingKey: String? = findProperty("signingKey")
+  val signingPassword: String? = findProperty("signingPassword")
+
   useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
   sign(configurations.archives.get())
 }
@@ -117,10 +114,6 @@ publishing {
     create<MavenPublication>("maven") {
       from(components["kotlin"])
       pom {
-        signing {
-          sign(configurations.archives.get())
-        }
-
         licenses {
           license {
             name.set("MIT License")

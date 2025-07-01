@@ -2,6 +2,7 @@ import Versions.configureJavaToolchain
 import io.gitlab.arturbosch.detekt.Detekt
 import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
 import org.jetbrains.kotlin.gradle.plugin.mpp.pm20.util.archivesName
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 // update plugins block, too
 val detektVersion = "1.23.6"

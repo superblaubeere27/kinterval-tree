@@ -36,9 +36,7 @@ java {
 }
 
 kotlin {
-  jvmToolchain {
-    configureJavaToolchain()
-  }
+  jvmToolchain(8)
 }
 
 group = "net.navatwo"
@@ -141,10 +139,10 @@ tasks.named("check") {
 }
 
 tasks.withType<Detekt>().configureEach {
-  jvmTarget = "18"
+  jvmTarget = "1.8"
 }
 tasks.withType<DetektCreateBaselineTask>().configureEach {
-  jvmTarget = "18"
+  jvmTarget = "1.8"
 }
 
 tasks.withType<Detekt>().configureEach {

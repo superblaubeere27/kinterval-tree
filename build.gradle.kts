@@ -36,7 +36,9 @@ java {
 }
 
 kotlin {
-  jvmToolchain(8)
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_1_8)
+    }
 }
 
 group = "net.navatwo"
